@@ -1,9 +1,14 @@
 #!/bin/bash
+# GSP053 - Managing Deployments Using Kubernetes Engine
+#
+# This course should be taken after GSP021 or other basic kubernetes deployment courses.
+#
+
 PROJECT=$(gcloud config list project 2>/dev/null | grep = | sed "s/^[^=]*= //")
 CLUSTER_NAME=bootcamp
 
 # Leave this variable blank if you want to enable doing all tasks at once
-DISABLE_ALL_TASK=1
+DISABLE_ALL_TASK=
 
 pause(){
 	read -p "Press Enter to continue"
@@ -47,7 +52,72 @@ cat << EOF
   This script file has been copied to there.
 ================================================================================
 EOF
-}
+} # End of task 1
+
+task2(){
+AUTH_DEPLOY_YAML=deployments/auth.yaml
+cat << EOF
+Task 2 - Create a deployment
+
+Change the auth container's image to "kelseyhightower/auth:1.0.0"
+EOF
+pause
+if [ "$EDITOR" == "" ]; then
+# Defaults to VIM
+vim $AUTH_DEPLOY_YAML
+else
+# Use user preferred editor
+$EDITOR $AUTH_DEPLOY_YAML
+fi
+cat $AUTH_DEPLOY_YAML | grep "kelseyhightower/auth:1.0.0" > /dev/null
+echo_cmd cat $AUTH_DEPLOY_YAML
+if ! [ -z "$?" ]; then
+    echo "Check the configuration file $AUTH_DEPLOY_YAML again."
+    exit 1
+fi
+
+# Creating pod(s)
+echo_cmd kubectl create -f $AUTH_DEPLOY_YAML
+
+# Series of deployment status checks.
+echo_cmd kubectl get deployments
+echo "Verify if the deployment has successed."
+pause
+
+echo_cmd kubectl get replicasets
+echo "Verify the Replica Sets has been created."
+pause
+
+echo_cmd kubectl get pods
+echo "Verify the pods has been created."
+pause
+
+# Create remaining deployments
+echo_cmd kubectl create -f services/auth.yaml
+echo_cmd kubectl create -f deployments/hello.yaml
+echo_cmd kubectl create -f services/hello.yaml
+echo_cmd kubectl create secret generic tls-certs --from-file tls/
+echo_cmd kubectl create configmap nginx-frontend-conf --from-file=nginx/frontend.conf
+echo_cmd kubectl create -f deployments/frontend.yaml
+echo_cmd kubectl create -f services/frontend.yaml
+
+cat << EOF
+================================================================================
+Load balancer is getting ready...
+EOF
+IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+while [ $IP_ADDRESS == "<pending>" ]; do
+    sleep 1
+    IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+done
+sleep 10
+
+echo "Using IP address $IP_ADDRESS"
+echo_cmd curl -ks https://$IP_ADDRESS
+
+echo "Checkpoint reached"
+pause
+} # End of task 2
 
 if [ "$PROJECT" == "" ]; then
 	echo "Warning: No selected project"
