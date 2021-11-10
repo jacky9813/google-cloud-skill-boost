@@ -87,11 +87,11 @@ else
 $EDITOR $AUTH_DEPLOY_YAML
 fi
 cat $AUTH_DEPLOY_YAML | grep "kelseyhightower/auth:1.0.0" > /dev/null
-echo_cmd cat $AUTH_DEPLOY_YAML
-if ! [ -z "$?" ]; then
+if [ $? -ne "0" ]; then
     echo "Check the configuration file $AUTH_DEPLOY_YAML again."
     exit 1
 fi
+echo_cmd cat $AUTH_DEPLOY_YAML
 
 # Creating pod(s)
 echo_cmd kubectl create -f $AUTH_DEPLOY_YAML
@@ -207,8 +207,8 @@ been paused.
 EOF
 pause
 echo_cmd kubectl rollout pause deployment/hello
-echo_cmd kubectl rollout status deployment/hello
-echo_cmd kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
+echo_cmd kubectl rollout status --watch=false deployment/hello
+echo_cmd "kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{\"\t\"}{\"\t\"}{.spec.containers[0].image}{\"\n\"}{end}'"
 
 cat << EOF
 ================================================================================
@@ -220,7 +220,7 @@ We'll resume and verify the rollout process for hello deployment next.
 EOF
 pause
 echo_cmd kubectl rollout resume deployment/hello
-echo_cmd kubectl rollout status deployment/hello
+echo_cmd kubectl rollout status --watch=false deployment/hello
 
 cat <<EOF
 ================================================================================
