@@ -304,6 +304,118 @@ EOF
 pause
 } # End of task 5
 
+task6(){
+cat << EOF
+Task 6 - Blue-green deployments
+Although rolling update is good enough in most occasion, there're still some
+services that require all the pods uses the same version of the software.
+
+Using the blue-green deployments allows you to swap out old software at once.
+Once the command is issued, kubernetes will create all replacement pods, after
+replacement pods are all ready, kubernetes will switch the service to new pods and
+closing the old pods.
+
+The major downside is, assuming you have the replicas configured the same, this
+process requires up to 2x the resources in the cluster.
+EOF
+pause
+cat << EOF
+================================================================================
+We'll use the hello service we created at task 2 for demostration. But first we need
+to update service selector so it'll pick pods with "app:hello" and "version:1.0.0".
+
+Ignore the warning says "resource service/hello is missing".
+EOF
+pause
+echo_cmd kubectl apply -f services/hello-blue.yaml
+cat << EOF
+================================================================================
+Now we'll create a new "green" deployment for newer version.
+EOF
+pause
+HELLO_GREEN_DPLY_YML=deployments/hello-green.yaml
+cat << EOF > $HELLO_GREEN_DPLY_YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+        track: stable
+        version: 2.0.0
+    spec:
+      containers:
+        - name: hello
+          image: kelseyhightower/hello:2.0.0
+          ports:
+            - name: http
+              containerPort: 80
+            - name: health
+              containerPort: 81
+          resources:
+            limits:
+              cpu: 0.2
+              memory: 10Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 81
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 81
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+EOF
+echo_cmd cat $HELLO_GREEN_DPLY_YML
+echo_cmd kubectl create -f $HELLO_GREEN_DPLY_YML
+
+echo "================================================================================"
+echo "Checking IP address..."
+IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+while [ $IP_ADDRESS == "<pending>" ]; do
+    sleep 1
+    IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+done
+sleep 10
+echo_cmd kubectl get services frontend
+echo_cmd curl -ks https://$IP_ADDRESS/version
+
+cat << EOF
+================================================================================
+Since we have not reconfigured the service to use version 2.0.0, the response of
+version info will be 1.0.0.
+
+Now we're going to update the service to use new pods.
+EOF
+pause
+echo_cmd kubectl apply -f services/hello-green.yaml
+echo_cmd curl -ks https://$IP_ADDRESS/version
+
+cat << EOF
+================================================================================
+Now you should see the version number has become 2.0.0.
+
+The following demostration explains how to rollback the blue-green deployments.
+Notice we still have hello-blue (the old ones) running.
+EOF
+pause
+echo_cmd kubectl apply -f services/hello-blue.yaml
+echo_cmd curl -ks https://$IP_ADDRESS/version
+} # End of task 6
+
 if [ "$PROJECT" == "" ]; then
 	echo "Warning: No selected project"
 	echo "You can still proceed to execute anyway or Ctrl-C to exit"
