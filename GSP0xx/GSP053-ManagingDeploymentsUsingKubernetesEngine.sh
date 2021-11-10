@@ -23,6 +23,12 @@ echo_cmd(){
 	echo ================================================================================
 	echo $@
 	eval $@
+    RET=$?
+    if [ $? -ne "0" ]; then
+        echo "Error occured"
+        pause
+    fi
+    return $RET
 }
 
 task1(){
@@ -59,7 +65,18 @@ AUTH_DEPLOY_YAML=deployments/auth.yaml
 cat << EOF
 Task 2 - Create a deployment
 
-Change the auth container's image to "kelseyhightower/auth:1.0.0"
+Prior to do the tasks, you should have basic understanding of what deployment and
+its metadata are.
+You can use commands below if you wanna to learn more:
+"kubectl explain deployment"
+"kubectl explain deployment --resursive"
+"kubectl explain deployment.metadata.name"
+
+In this task, we'll create several deployments and services for future tasks.
+But before that, you need to change the auth container's image to
+"kelseyhightower/auth:1.0.0".
+
+(If you have a preferred text editor, set it up at EDITOR variable in yout shell.)
 EOF
 pause
 if [ "$EDITOR" == "" ]; then
@@ -218,6 +235,74 @@ echo_cmd kubectl rollout undo deployment/hello
 echo_cmd kubectl rollout history deployment/hello
 echo_cmd kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
 } # End of task 4
+
+
+_task5_catch_sigint(){
+    if [ -z $_TASK5_IN_LOOP ]; then
+        exit 1
+    else
+        _TASK5_EXIT_LOOP=1
+    fi
+}
+
+task5(){
+HELLO_CANARY_DPLY_YML=deployments/hello-canary.yaml
+cat << EOF
+Task 5 - Canary deployments
+To prevent potential catastrophe caused by new version of the software, doing some
+testing in testing environment is important.
+
+In this task, we'll demostrate how to deploy containers to different "track" than
+your typical production deployment.
+We'll be using $HELLO_CANARY_DPLY_YML to deploy testing services.
+EOF
+pause
+echo_cmd cat $HELLO_CANARY_DPLY_YML
+echo_cmd kubectl create -f $HELLO_CANARY_DPLY_YML
+echo_cmd kubectl get deployments
+
+cat <<EOF
+================================================================================
+Now you should notice there's a new deployment called hello-canary.
+The service will pick it up as one of its worker pod.
+Since there's only one canary pods within 4 hello pods, requests being served by
+hello/2.0.0 is about 25%
+
+We'll test it out now.
+EOF
+pause
+echo "Checking IP address..."
+IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+while [ $IP_ADDRESS == "<pending>" ]; do
+    sleep 1
+    IP_ADDRESS=$(kubectl get services | grep frontend | awk '{print $4}')
+done
+sleep 10
+echo_cmd kubectl get services frontend
+
+echo "(Press Ctrl-C to stop testing)"
+
+_TASK5_EXIT_LOOP=0
+_TASK5_IN_LOOP=1
+trap _task5_catch_sigint SIGINT
+while [ $_TASK5_EXIT_LOOP -ne 0 ]; do
+echo_cmd curl -ks https://$IP_ADDRESS/version
+sleep 1
+done
+trap - SIGINT #Clear the trap
+
+echo "Checkpoint reached"
+pause
+
+cat << EOF
+Instead of having those 25% (in our example) to be served, we can specify who uses
+canary pods by editing "spec.sessionAffinity" to the client IP address.
+
+Due to the difficulty of set up the environment in this course, we'll not
+demonstrate here, but it is very important when deploying out in the field.
+EOF
+pause
+} # End of task 5
 
 if [ "$PROJECT" == "" ]; then
 	echo "Warning: No selected project"
