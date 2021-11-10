@@ -56,8 +56,11 @@ cat << EOF
 ================================================================================
   Please switch to orchestrate-with-kubernetes/kubernetes to continue.
   This script file has been copied to there.
+  
+  You can use "START_TASK=2 $0 all" to walk though all tasks.
 ================================================================================
 EOF
+exit 0
 } # End of task 1
 
 task2(){
@@ -149,11 +152,12 @@ echo_cmd kubectl explain deployment.spec.replicas
 echo "Changing the hello deployment to 5 replicas"
 echo_cmd kubectl scale deployment hello --replicas=5
 
+echo "================================================================================"
 echo "Waiting for all 5 pods get online"
-POD_COUNT=$(kubectl get pods | grep hello- | wc -l)
+POD_COUNT=$(kubectl get pods | grep hello- | grep Running | wc -l)
 while [ $POD_COUNT -lt 5 ]; do
     sleep 1
-    POD_COUNT=$(kubectl get pods | grep hello- | wc -l)
+    POD_COUNT=$(kubectl get pods | grep hello- | grep Running | wc -l)
 done
 echo_cmd "kubectl get pods | grep hello-"
 
@@ -165,6 +169,7 @@ We'll scale back down to 3 pods now.
 EOF
 pause
 echo_cmd kubectl scale deployment hello --replicas=3
+echo "================================================================================"
 echo "Waiting for hello deployment scale back to 3 pods..."
 while [ $POD_COUNT -gt 3 ]; do
     sleep 1
@@ -233,7 +238,17 @@ EOF
 pause
 echo_cmd kubectl rollout undo deployment/hello
 echo_cmd kubectl rollout history deployment/hello
-echo_cmd kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
+
+echo "================================================================================"
+echo "Waiting for rollback completed..."
+
+NEW_PODS=$(kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}' | grep hello | grep 2.0 | wc -l)
+while [ $NEW_PODS -gt "0" ];do
+sleep 1
+NEW_PODS=$(kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{"\t"}{"\t"}{.spec.containers[0].image}{"\n"}{end}' | grep hello | grep 2.0 | wc -l)
+done
+
+echo_cmd "kubectl get pods -o jsonpath --template='{range .items[*]}{.metadata.name}{\"\t\"}{\"\t\"}{.spec.containers[0].image}{\"\n\"}{end}'"
 } # End of task 4
 
 
@@ -285,7 +300,7 @@ echo "(Press Ctrl-C to stop testing)"
 _TASK5_EXIT_LOOP=0
 _TASK5_IN_LOOP=1
 trap _task5_catch_sigint SIGINT
-while [ $_TASK5_EXIT_LOOP -ne 0 ]; do
+while [ $_TASK5_EXIT_LOOP -eq 0 ]; do
 echo_cmd curl -ks https://$IP_ADDRESS/version
 sleep 1
 done
@@ -431,7 +446,7 @@ if [ "$1" == "all" ]; then
 		echo "No argument will be able to passed to any task."
 		echo "Are you sure you wanna do all at once?"
 		pause
-		task=1
+		task="${START_TASK:-1}"
 		while [[ $(type -t task$task) == function ]]; do
 			task$task
 			task=$(($task + 1))
