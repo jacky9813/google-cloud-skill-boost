@@ -67,12 +67,23 @@ splitter
 echo "Checkpoint reached"
 pause
 echo_cmd kubectl get pods
+splitter
+echo "Waiting for Jenkins ready..."
+IP_ADDRESS=$(kubectl get services | grep LoadBalancer | grep cd-jenkins | awk '{print $4}')
+while [ "$IP_ADDRESS" == "<pending>" ]; do
+sleep 1
+IP_ADDRESS=$(kubectl get services | grep LoadBalancer | grep cd-jenkins | awk '{print $4}')
+done
+sleep 10
 echo_cmd kubectl get services
-PASS = $(printf $(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode); echo)
-echo_cmd 'printf $(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode) ;echo'
+PASS=$(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)
+splitter
+echo 'printf $(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode) ;echo'
+echo $PASS
 splitter
 cat << EOF
 To access the Jenkins user interface, click "Web Preview" on the cloud console, then click "Preview on port 8080"
+or via the url "http://$IP_ADDRESS:8080/"
 
 Use these credential to login.
 username: admin
