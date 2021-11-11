@@ -9,7 +9,7 @@ These scripts may not work since I may still working on them.
 * (Tested)[GSP021 - Orchestrating the Cloud with Kubernetes](GSP0xx/GSP021-OrchestratingTheCloudWithKubernetes.sh)
 * (Tested)[GSP053 - Managing Deployments Using Kubernetes Engine](GSP0xx/GSP053-ManagingDeploymentsUsingKubernetesEngine.sh)
 * [GSP100 - Kubernetes Engines: Qwik Start](GSP1xx/GSP100-KubernetesEngines_QwikStart.sh)
-* [GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
+* (Tested)[GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
 * [GSP313 - Create and Manage Cloud Resources: Challenge Lab](GSP3xx/GSP313-CreateAndManageCloudResources_ChallengeLab.sh)
 
 ### Link

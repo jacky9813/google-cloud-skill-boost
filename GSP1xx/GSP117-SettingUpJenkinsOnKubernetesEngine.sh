@@ -24,7 +24,7 @@ check_return(){
 echo_cmd(){
     splitter
 	echo $@
-	$@
+	eval $@
 }
 
 task1(){
@@ -50,6 +50,7 @@ EOF
 splitter
 echo "Checkpoint reached"
 pause
+exit
 }
 
 task2(){
