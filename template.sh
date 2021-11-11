@@ -23,7 +23,7 @@ check_return(){
 echo_cmd(){
     splitter
 	echo $@
-	$@
+	eval $@
 }
 
 # TODO: PUT THE TASKS HERE
