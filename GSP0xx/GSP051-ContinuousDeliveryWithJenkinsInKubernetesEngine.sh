@@ -105,8 +105,55 @@ cd $ORIGINAL_WD
 } # End of task 1
 
 task2(){
+cat << EOF
+Task 2 - Deploying the Application
 
-}
+We'll deploy the sample-app into a new namespace "production"
+EOF
+pause
+splitter
+ORIG_WD=$(pwd)
+echo "Changing directory to sample-app"
+cd sample-app
+echo_cmd kubectl create ns production
+if ! [ -d "k8s/production" ] || ! [ -d "k8s/canary" ] || ! [ -d "k8s/services" ]; then
+cat << EOF
+There're some files missing.
+Check the existence of "production", "canary" and "services" directories inside "sample-app/k8s".
+
+Switching back to original working directory.
+EOF
+cd $ORIG_WD
+exit 1
+fi
+echo_cmd kubectl apply -f k8s/production -n production
+echo_cmd kubectl apply -f k8s/canary -n production
+echo_cmd kubectl apply -f k8s/services -n production
+splitter
+echo "Checkpoint reached"
+pause
+
+echo_cmd kubectl scale deployment gceme-frontend-production -n production --replicas 4
+echo_cmd kubectl get pods -n production -l app=gceme -l role=frontend
+echo_cmd kubectl get pods -n production -l app=gceme -l role=backend
+splitter
+echo "Waiting for LoadBalancer getting ready."
+IP_ADDRESS = $(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip} --namespace=production services gceme-frontend")
+while [ "$IP_ADDRESS" == "<pending>" ]; do
+sleep 1
+IP_ADDRESS = $(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip} --namespace=production services gceme-frontend")
+done
+sleep 10
+echo_cmd kubectl get services -n production
+echo_cmd curl http://$IP_ADDRESS/version
+splitter
+cat << EOF
+The service is ready on IP $IP_ADDRESS
+You can view info card by accessing http://$IP_ADDRESS through your browser
+or check the application version using http://$IP_ADDRESS/version
+EOF
+pause
+} # End of task 2
 
 case "$1" in
     "all")
