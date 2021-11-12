@@ -1,5 +1,6 @@
 #!/bin/bash
 PROJECT=$(gcloud config list project 2>/dev/null | grep = | sed "s/^[^=]*= //")
+ACCOUNT=$(gcloud config list account 2>/dev/null | grep = | sed "s/^[^=]*= //")
 CLUSTER_NAME=jenkins-cd
 # Leave this variable blank if you want to enable doing all tasks at once
 DISABLE_ALL_TASK=1
@@ -191,9 +192,17 @@ echo_cmd git init
 fi
 echo_cmd git config credential.helper gcloud.sh
 git remote add origin https://source.developers.google.com/p/$PROJECT/r/default
-# TODO: automatically figuring out the username and the email address
-USERNAME=
-EMAIL=
+if [ "$ACCOUNT" == "" ]; then
+    cat << EOF
+Unable to get the account automatically.
+Please enter email and name for git config.
+EOF
+    read -p "user.email = " EMAIL
+    read -p "user.name = " USERNAME
+else
+    EMAIL=$ACCOUNT
+    USERNAME=$(echo $ACCOUNT | sed "s/@.*$//")
+fi
 echo_cmd git config --global user.email "$EMAIL"
 echo_cmd git config --global user.name "$USERNAME"
 echo_cmd git add .
@@ -286,7 +295,58 @@ EOF
     pause
     $EDITOR main.go
 done
+
+splitter
+echo "Changing directory to $ORIG_WD"
+cd $ORIG_WD
 } # End of task 4
+
+_task5_sigint(){
+_TASK5_EXIT_LOOP=1
+}
+
+task5(){
+if ! [ -f "sample-app/Jenkinsfile" ] || ! [ -f "sample-app/main.go" ] || ! [ -f "sample-app/html.go" ]; then
+    echo "Make sure there's a directory called sample-app"
+    exit 1
+fi
+ORIG_WD=$(pwd)
+cat << EOF
+Task 5 - Kick off Deployment
+EOF
+pause
+splitter
+echo "Changing Directory to sample-app"
+cd sample-app
+echo_cmd git add Jenkinsfile main.go html.go
+echo_cmd 'git commit -m "Version 2.0.0"'
+echo_cmd git push origin new-feature
+splitter
+cat << EOF
+Navigate your browser to Jenkins UI. You should see the building process has
+started. This may take a few minutes.
+
+When the building is running, open the "console output" in the build menu.
+There should be a message "kubectl --namespace=new-feature apply ..."
+
+We'll start proxy in the background and test the deployment 
+EOF
+pause
+echo "kubectl proxy &"
+kubectl proxy &
+PROXY_PID=$!
+echo "proxy PID is $PROXY_PID"
+_TASK5_EXIT_LOOP=0
+trap _task5_sigint SIGINT
+while [ $_TASK5_EXIT_LOOP -eq "0" ]; do
+    curl http://localhost:8001/api/v1/namespaces/new-feature/services/gceme-frontend:80/proxy/version
+    sleep 1
+done
+trap - SIGINT
+splitter
+echo "Changing directory to $ORIG_WD"
+cd $ORIG_WD
+} # End of task 5
 
 case "$1" in
     "all")
