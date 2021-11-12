@@ -31,6 +31,11 @@ echo_cmd(){
     fi
     return $RET
 }
+checkpoint(){
+    splitter
+    echo "Checkpoint reached"
+    pause
+}
 
 task1(){
 ORIGINAL_WD=$(realpath $(pwd))
@@ -53,9 +58,7 @@ echo_cmd cp $(realpath $0) continuous-deployment-on-kubernetes/
 echo_cmd gcloud container clusters create $CLUSTER_NAME --num-nodes=2 --machine-type=n1-standard-2 --scopes="https://www.googleapis.com/auth/source.read_write,cloud-platform"
 echo_cmd gcloud container clousters get-credentials $CLUSTER_NAME
 echo_cmd kubectl cluster-info
-splitter
-echo "Checkpoint reached"
-pause
+checkpoint
 
 # Install Jenkins to k8s cluster
 echo_cmd helm repo add jenkins https://charts.jenkins.io
@@ -66,9 +69,7 @@ cd continuous-deployment-on-kubernetes
 echo_cmd gsutil cp gs://spls/gsp330/values.yaml jenkins/values.yaml
 echo_cmd helm install cd jenkins/jenkins -f jenkins/values.yaml --wait
 echo_cmd kubectl get pods
-splitter
-echo "Checkpoint reached"
-pause
+checkpoint
 
 echo_cmd kubectl create clusterrolebinding jenkins-deploy --clusterrole=cluster-admin --serviceaccount=default:cd-jenkins
 
@@ -102,6 +103,7 @@ EOF
 splitter
 echo "** Warning: Changing directory back"
 cd $ORIGINAL_WD
+exit
 } # End of task 1
 
 task2(){
@@ -129,9 +131,7 @@ fi
 echo_cmd kubectl apply -f k8s/production -n production
 echo_cmd kubectl apply -f k8s/canary -n production
 echo_cmd kubectl apply -f k8s/services -n production
-splitter
-echo "Checkpoint reached"
-pause
+checkpoint
 
 echo_cmd kubectl scale deployment gceme-frontend-production -n production --replicas 4
 echo_cmd kubectl get pods -n production -l app=gceme -l role=frontend
@@ -154,6 +154,57 @@ or check the application version using http://$IP_ADDRESS/version
 EOF
 pause
 } # End of task 2
+
+task3(){
+# Pre execution check
+if [ "$PROJECT" == "" ]; then
+echo "Having an active project is essential for task 3."
+exit 1
+fi
+if  ! [ -d "sample-app" ] || \
+    ! [ -d "sample-app/k8s" ] || \
+    ! [ -d "sample-app/vendor" ] || \
+    ! [ -f "sample-app/Dockerfile" ] || \
+    ! [ -f "sample-app/Jenkinsfile" ]; then
+echo 'Task 3 requires a directory called "sample-app", which this script cannot find.'
+exit 1
+fi
+
+cat << EOF
+Task 3 - Creating the Jenkins Pipeline
+EOF
+pause
+splitter
+ORIG_WD=$(pwd)
+echo 'Changing directory to "sample-app"'
+cd sample-app
+echo_cmd gcloud source repos create default
+checkpoint
+GIT_VERSION=$(git --version | sed "s/^[^0-9]*//" | sed "s/\./ /g")
+if [ $(echo "$GIT_VERSION" | awk '{print $1}') -ge "2" ] && [ $(echo "$GIT_VERSION" | awk '{print $2}') -ge "28" ]; then
+# Some said that default branch name would change in the future version of the git.
+# So I added --initial-branch option (or -b) in here.
+# But this option only implemented after git 2.28
+echo_cmd git init -b "master"
+else
+echo_cmd git init
+fi
+echo_cmd git config credential.helper gcloud.sh
+git remote add origin https://source.developers.google.com/p/$PROJECT/r/default
+# TODO: automatically figuring out the username and the email address
+USERNAME=
+EMAIL=
+echo_cmd git config --global user.email "$EMAIL"
+echo_cmd git config --global user.name "$USERNAME"
+echo_cmd git add .
+echo_cmd git commit -m "Initial commit"
+echo_cmd git push origin master
+splitter
+cat << EOF
+From here, we need to allow Jenkins accessing the code repository.
+Follow the instruction on the course page then continue to execute task 4.
+EOF
+} # End of task 3
 
 case "$1" in
     "all")
