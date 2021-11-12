@@ -12,18 +12,28 @@ splitter(){
     done
 }
 pause(){
-	read -p "Press Enter to continue"
+    read -p "Press Enter to continue"
 }
 check_return(){
-	if [ $1 -ne "0" ]; then
-		echo "Error detected"
-		pause
-	fi
+    if [ $1 -ne "0" ]; then
+        echo "Error detected"
+        pause
+    fi
 }
 echo_cmd(){
     splitter
 	echo $@
 	eval $@
+    RET=$?
+    if [ $RET -ne "0" ]; then
+        echo "Error occured! You can ignore this message and press enter to continue."
+        pause
+    fi
+}
+checkpoint(){
+    splitter
+    echo "Checkpoint reached"
+    pause
 }
 
 # TODO: PUT THE TASKS HERE
