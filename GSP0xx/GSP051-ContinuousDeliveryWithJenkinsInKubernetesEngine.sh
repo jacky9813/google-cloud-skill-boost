@@ -61,7 +61,7 @@ echo_cmd gcloud config set compute/zone us-east1-d
 echo_cmd git clone https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes.git
 echo_cmd cp $(realpath $0) continuous-deployment-on-kubernetes/
 echo_cmd gcloud container clusters create $CLUSTER_NAME --num-nodes=2 --machine-type=n1-standard-2 --scopes="https://www.googleapis.com/auth/source.read_write,cloud-platform"
-echo_cmd gcloud container clousters get-credentials $CLUSTER_NAME
+echo_cmd gcloud container clusters get-credentials $CLUSTER_NAME
 echo_cmd kubectl cluster-info
 checkpoint
 
@@ -143,10 +143,10 @@ echo_cmd kubectl get pods -n production -l app=gceme -l role=frontend
 echo_cmd kubectl get pods -n production -l app=gceme -l role=backend
 splitter
 echo "Waiting for LoadBalancer getting ready."
-IP_ADDRESS = $(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip} --namespace=production services gceme-frontend")
+IP_ADDRESS=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
 while [ "$IP_ADDRESS" == "<pending>" ]; do
 sleep 1
-IP_ADDRESS = $(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip} --namespace=production services gceme-frontend")
+IP_ADDRESS=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
 done
 sleep 10
 echo_cmd kubectl get services -n production
@@ -210,7 +210,7 @@ fi
 echo_cmd git config --global user.email "$EMAIL"
 echo_cmd git config --global user.name "$USERNAME"
 echo_cmd git add .
-echo_cmd git commit -m "Initial commit"
+echo_cmd 'git commit -m "Initial commit"'
 echo_cmd git push origin master
 splitter
 echo "Changing directory to $ORIG_WD"
@@ -350,6 +350,7 @@ trap - SIGINT
 splitter
 echo "Changing directory to $ORIG_WD"
 cd $ORIG_WD
+kill -SIGINT $PROXY_PID
 } # End of task 5
 
 _task6_sigint(){
