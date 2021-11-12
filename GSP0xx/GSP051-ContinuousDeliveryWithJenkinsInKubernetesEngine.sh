@@ -42,7 +42,11 @@ task1(){
 ORIGINAL_WD=$(realpath $(pwd))
 cat << EOF
 Task 1 - Preparation
-This task covers the following sections in GSP051:
+
+Before this course started, you shoule've already known the basic workflow of git.
+
+
+Task 1 covers the following sections in GSP051:
 * Setup
 * Clone the repository
 * Provisioning Jenkins
@@ -347,6 +351,88 @@ splitter
 echo "Changing directory to $ORIG_WD"
 cd $ORIG_WD
 } # End of task 5
+
+_task6_sigint(){
+_TASK6_EXIT_LOOP=1
+}
+
+task6(){
+if ! [ -d "sample-app" ]; then
+cat << EOF
+The directory "sample-app" cannot be found.
+Task 6 requires "sample-app" exist in the same working directory as this script.
+EOF
+exit 1
+fi
+cat << EOF
+Task 6 - Deploying a Canary Release
+EOF
+pause
+splitter
+ORIG_WD=$(pwd)
+echo 'Changing directory to "sample-app"'
+cd sample-app
+echo_cmd git checkout -b canary
+# The canary code will be the same as new-feature branch
+
+echo_cmd git push origin canary
+
+IP_ADDRESS=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
+_TASK6_EXIT_LOOP=0
+trap _task6_sigint SIGINT
+while [ "$_TASK6_EXIT_LOOP" -eq "0" ]; do
+    curl http://$IP_ADDRESS/version
+    sleep 1
+done
+trap - SIGINT
+
+splitter
+echo "Changing directory to $ORIG_WD"
+cd $ORIG_WD
+} # End of task 6
+
+_task7_sigint(){
+_TASK7_EXIT_LOOP=1
+}
+
+task7(){
+if ! [ -d "sample-app" ]; then
+cat << EOF
+The directory "sample-app" cannot be found.
+Task 7 requires "sample-app" exist in the same working directory as this script.
+EOF
+exit 1
+fi
+cat << EOF
+Task 7 - Deploying to Production
+EOF
+pause
+splitter
+ORIG_WD=$(pwd)
+echo 'Changing directory to "sample-app"'
+cd sample-app
+
+echo_cmd git checkout master
+echo_cmd git merge canary
+echo_cmd git push origin master
+
+IP_ADDRESS=$(kubectl get -o jsonpath="{.status.loadBalancer.ingress[0].ip}" --namespace=production services gceme-frontend)
+_TASK7_EXIT_LOOP=0
+trap _task7_sigint SIGINT
+while [ "$_TASK7_EXIT_LOOP" -eq "0" ]; do
+curl http://$IP_ADDRESS/version
+sleep 1
+done
+trap - SIGINT
+cat << EOF
+Go to http://$IP_ADDRESS in your browser.
+You should see a similar output to the picture in the course.
+EOF
+pause
+splitter
+echo "Changing directory to $ORIG_WD"
+cd $ORIG_WD
+} # End of task 7
 
 case "$1" in
     "all")
