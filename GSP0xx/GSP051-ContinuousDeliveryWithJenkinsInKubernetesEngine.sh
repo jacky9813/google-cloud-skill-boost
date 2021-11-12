@@ -200,11 +200,93 @@ echo_cmd git add .
 echo_cmd git commit -m "Initial commit"
 echo_cmd git push origin master
 splitter
+echo "Changing directory to $ORIG_WD"
+cd $ORIG_WD
+splitter
 cat << EOF
 From here, we need to allow Jenkins accessing the code repository.
 Follow the instruction on the course page then continue to execute task 4.
+
+Your repository URL: https://source.developers.google.com/p/$PROJECT/r/default
 EOF
 } # End of task 3
+
+task4(){
+if ! [ -d "sample-app" ]; then
+echo 'Directory "sample-app" not found'
+exit 1
+fi
+local EDITOR=${EDITOR:-vim}
+cat << EOF
+Task 4 - Creating the Development environment
+EOF
+pause
+splitter
+echo 'Changing directory to "sample-app"'
+cd sample-app
+echo_cmd git checkout -b new-feature
+splitter
+cat << EOF
+Your task now is to modify the Jenkinsfile as:
+...
+PROJECT = $PROJECT
+APP_NAME = "gceme"
+...
+
+We'll be using $EDITOR to open the file for you.
+EOF
+pause
+echo_cmd $EDITOR Jenkinsfile
+cat Jenkinsfile | grep $PROJECT >> /dev/null
+while [ $? -ne "0" ]; do
+    splitter
+    cat << EOF
+We cannot find "$PROJECT" in the file.
+We'll open the editor again.
+EOF
+    pause
+    $EDITOR Jenkinsfile
+    cat Jenkinsfile | grep $PROJECT >> /dev/null
+done
+
+splitter
+cat << EOF
+In "html.go", we'll change two instances of '<div class="card blue">' with
+'<div class="card orange">'
+EOF
+pause
+echo_cmd $EDITOR html.go
+while [ $(cat html.go | grep '<div class="card blue">' | wc -l) -ne "0" ] && [ $(cat html.go | grep '<div class="card orange">' | wc -l) -ne "2" ]; do
+    splitter
+    cat << EOF
+There's one (or more) '<div class="card blue">' needs to be changed to
+'<div class="card orange">'.
+
+We'll open the editor for you to change it.
+EOF
+    pause
+    $EDITOR html.go
+done
+
+splitter
+cat << EOF
+In "main.go", change the version number to "2.0.0"
+search for a line with 'const version string = "1.0.0"' and change it.
+EOF
+pause
+$EDITOR main.go
+while [ $(cat main.go | grep "const version string" | grep "=" | grep "\"2.0.0\"" | wc -l) -ne "1" ]; do
+    splitter
+    cat << EOF
+The line originally is 'const version string = "1.0.0"' should have been changed to
+'const version string = "2.0.0"', but it's not.
+
+We'll open the editor again.
+EOF
+    pause
+    $EDITOR main.go
+done
+} # End of task 4
 
 case "$1" in
     "all")
