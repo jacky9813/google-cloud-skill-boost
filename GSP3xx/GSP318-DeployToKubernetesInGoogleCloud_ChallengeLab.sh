@@ -38,17 +38,18 @@ checkpoint(){
 
 # TODO: PUT THE TASKS HERE
 task1(){
-# TODO: Figure out the path to the repo
-REPO_PATH=
+REPO_PATH=https://source.developers.google.com/p/$PROJECT/r/valkyrie-app
 cat << EOF
 Task 1 - Create a Docker image and store the Dockerfile
 EOF
 pause
 
 echo_cmd 'gsutil cat gs://cloud-training/gsp318/marking/setup_marking.sh | bash'
-echo_cmd gcloud source repos list
+echo_cmd gcloud source repos describe valkyrie-app
 pause
 echo_cmd git clone $REPO_PATH
+# or
+# echo_cmd gcloud source reois clone valkyrie-app
 cat << EOF > valkyrie-app/Dockerfile
 FROM golang:1.10
 WORKDIR /go/src/app
@@ -111,13 +112,90 @@ echo_cmd kubectl scale --replicas=3 -f valkyrie-app/k8s/deployment.yaml
 
 # Merging the code
 splitter
+ORIG_WD=$(pwd)
 echo "Changing directory into valkyrie-app"
 cd valkyrie-app
+pwd
 echo_cmd git merge origin/kurt-dev
 
 # Building the container image and push to the image repository
 echo_cmd docker build -t gcr.io/$PROJECT/valkyrie-app:v0.0.2
 echo_cmd docker push gcr.io/$PROJECT/valkyrie-app:v0.0.2
+
+checkpoint
+
+splitter
+echo "Changing directory back to $ORIG_WD"
+cd $ORIG_WD
+pwd
+}
+
+task6(){
+cat << EOF
+Task 6 - Create a pipeline in Jenkins to deploy your app
+EOF
+pause
+
+# Preparing to connect to Jenkins
+PASS=$(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode)
+POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=cd" -o jsonpath="{.items[0].metadata.name}")
+splitter
+echo "kubectl port-forward $POD_NAME 8080:8080 >> /dev/null &"
+kubectl port-forward $POD_NAME 8080:808 >> /dev/null &
+PROXY_PID=$!
+echo "Forwarding process (PID: $PROXY_PID) started"
+
+# Setup Jenkins
+splitter
+cat << EOF
+Follow these steps:
+1) Open the Jenkins console.
+2) Setup credentials
+3) Create a job that points to the source repository (https://source.developers.google.com/p/$PROJECT/r/valkyrie-app)
+
+Press enter when finished.
+EOF
+pause
+splitter
+
+splitter
+ORIG_WD=$(pwd)
+echo "Changing directory into valkyrie-app"
+cd valkyrie-app
+pwd
+
+# Making changes in source file on master branch
+cat << EOF
+Change the placeholder "YOUR_PROJECT" to "$PROJECT" in Jenkinsfile
+EOF
+pause
+echo_cmd $EDITOR Jenkinsfile
+while [ $(grep "$PROJECT" Jenkinsfile | wc -l) -eq "0" ]; do
+    echo "$PROJECT is not found in the Jenkinsfile, try again."
+    pause
+    echo_cmd $EDITOR Jenkinsfile
+done
+cat << EOF
+Change all occurances of "green" to "orange" in html.go
+EOF
+pause
+echo_cmd $EDITOR html.go
+while [ $(grep green html.go | wc -l) -gt "0" ]; do
+    echo "There is/are still occurance(s) in the html.go, try again."
+    pause
+    echo_cmd $EDITOR html.go
+done
+
+# Commit the changes and push to the remote repository
+echo_cmd git add Jenkinsfile html.go
+echo_cmd git commit -m "project ID in Jenkins file, green are now orange in html.go"
+echo_cmd git push origin master
+
+splitter
+cat << EOF
+Check the Jenkins UI for build status.
+EOF
+pause
 
 checkpoint
 }
