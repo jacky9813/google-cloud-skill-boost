@@ -1,5 +1,7 @@
 #!/bin/bash
 PROJECT=$(gcloud config list project 2>/dev/null | grep = | sed "s/^[^=]*= //")
+EDITOR=${EDITOR:-vim}
+ACCOUNT=$(gcloud config list account 2>/dev/null | grep = | sed "s/^[^=]*= //")
 
 # Leave this variable blank if you want to enable doing all tasks at once
 DISABLE_ALL_TASK=1
@@ -65,14 +67,17 @@ checkpoint
 } # End of task 1
 
 task2(){
+CONTAINER_NAME=gsp318-valkyrie-app
 cat << EOF
 Task 2 - Test the created Docker image
 EOF
 pause
 
-echo_cmd docker run -d -p 8080:8080 valkyrie-app:v0.0.1
+echo_cmd docker run -d -p 8080:8080 --name "$CONTAINER_NAME" valkyrie-app:v0.0.1
 echo_cmd step2.sh
 checkpoint
+echo_cmd docker stop "$CONTAINER_NAME"
+echo_cmd docker rm "$CONTAINER_NAME"
 }
 
 task3(){
@@ -86,7 +91,6 @@ checkpoint
 }
 
 task4(){
-EDITOR=${EDITOR:-vim}
 cat << EOF
 Task 4 - Create and expose a deployment in Kubernetes
 EOF
@@ -94,6 +98,13 @@ pause
 echo_cmd gcloud container clusters get-credentials valkyrie-dev
 echo_cmd kubectl cluster-info
 
+
+splitter
+cat << EOF
+All container (frontend and backend) should use the image gcr.io/$PROJECT/valkyrie-app
+Change the deployment.yaml to make that happen.
+EOF
+pause
 echo_cmd $EDITOR valkyrie-app/k8s/deployment.yaml
 echo_cmd kubectl create -f valkyrie-app/k8s/deployment.yaml
 echo_cmd $EDITOR valkyrie-app/k8s/service.yaml
@@ -110,6 +121,8 @@ pause
 
 echo_cmd kubectl scale --replicas=3 -f valkyrie-app/k8s/deployment.yaml
 
+checkpoint
+
 # Merging the code
 splitter
 ORIG_WD=$(pwd)
@@ -119,8 +132,10 @@ pwd
 echo_cmd git merge origin/kurt-dev
 
 # Building the container image and push to the image repository
-echo_cmd docker build -t gcr.io/$PROJECT/valkyrie-app:v0.0.2
+echo_cmd docker build -t gcr.io/$PROJECT/valkyrie-app:v0.0.2 .
 echo_cmd docker push gcr.io/$PROJECT/valkyrie-app:v0.0.2
+
+echo_cmd kubectl edit deployment/valkyrie-dev
 
 checkpoint
 
@@ -130,7 +145,20 @@ cd $ORIG_WD
 pwd
 }
 
+_task6_sigint(){
+# Here to just ignore SIGINT so doing nothing
+}
+
 task6(){
+if [ $(docker ps | wc -l) -gt "1" ]; then
+cat << EOF
+Shutdown the running docker container first before you continue.
+Use the command "docker ps" to get container name, then 
+"docker stop <containter name>" to stop it.
+
+We need port 8080 to be opened.
+EOF
+fi
 cat << EOF
 Task 6 - Create a pipeline in Jenkins to deploy your app
 EOF
@@ -141,7 +169,7 @@ PASS=$(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}
 POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=cd" -o jsonpath="{.items[0].metadata.name}")
 splitter
 echo "kubectl port-forward $POD_NAME 8080:8080 >> /dev/null &"
-kubectl port-forward $POD_NAME 8080:808 >> /dev/null &
+kubectl port-forward $POD_NAME 8080:8080 >> /dev/null &
 PROXY_PID=$!
 echo "Forwarding process (PID: $PROXY_PID) started"
 
@@ -150,13 +178,17 @@ splitter
 cat << EOF
 Follow these steps:
 1) Open the Jenkins console.
+    Your credential:
+        Username: admin
+        Password: $PASS
 2) Setup credentials
 3) Create a job that points to the source repository (https://source.developers.google.com/p/$PROJECT/r/valkyrie-app)
 
 Press enter when finished.
 EOF
+trap _task6_sigint SIGINT
 pause
-splitter
+trap - SIGINT
 
 splitter
 ORIG_WD=$(pwd)
@@ -179,16 +211,21 @@ cat << EOF
 Change all occurances of "green" to "orange" in html.go
 EOF
 pause
-echo_cmd $EDITOR html.go
-while [ $(grep green html.go | wc -l) -gt "0" ]; do
+echo_cmd $EDITOR source/html.go
+while [ $(grep green source/html.go | wc -l) -gt "0" ]; do
     echo "There is/are still occurance(s) in the html.go, try again."
     pause
-    echo_cmd $EDITOR html.go
+    echo_cmd $EDITOR source/html.go
 done
 
+# Setup Git global config
+echo_cmd "git config --global user.email '$ACCOUNT'"
+USERNAME=$(echo $ACCOUNT | sed "s/@.*$//")
+echo_cmd "git config --global user.name '$USERNAME'"
+
 # Commit the changes and push to the remote repository
-echo_cmd git add Jenkinsfile html.go
-echo_cmd git commit -m "project ID in Jenkins file, green are now orange in html.go"
+echo_cmd git add Jenkinsfile source/html.go Dockerfile
+echo_cmd 'git commit -m "project ID in Jenkins file, green are now orange in html.go"'
 echo_cmd git push origin master
 
 splitter
