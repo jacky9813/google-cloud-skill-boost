@@ -12,7 +12,7 @@ These scripts may not work since I may still working on them.
 * [GSP100 - Kubernetes Engines: Qwik Start](GSP1xx/GSP100-KubernetesEngines_QwikStart.sh)
 * (Tested)[GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
 * [GSP313 - Create and Manage Cloud Resources: Challenge Lab](GSP3xx/GSP313-CreateAndManageCloudResources_ChallengeLab.sh)
-* [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
+* (Tested)[GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
 
 ### Link
 [Training Main Page](https://www.cloudskillsboost.google/)
