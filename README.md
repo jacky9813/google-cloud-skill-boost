@@ -12,6 +12,7 @@ These scripts may not work since I may still working on them.
 * (Tested)[GSP079 - Getting Started with Cloud KMS](GSP0xx/GSP079-GettingStartedWithCloudKMS.sh)
 * [GSP100 - Kubernetes Engines: Qwik Start](GSP1xx/GSP100-KubernetesEngines_QwikStart.sh)
 * (Tested)[GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
+* (Tested)[GSP178 - Setting up a Private Kubetnetes Cluster](GSP1xx/GSP178-SettingUpAPrivateKubernetesCluster.sh)
 * (Tested)[GSP190 - IAM Custom Roles](GSP1xx/GSP190-IAMCustomRoles.sh)
 * (Tested)[GSP193 - VPC Network Peering](GSP1xx/GSP193-VPCNetworkPeering.sh)
 * (Tested)[GSP199 - Service Accounts and Roles: Fundamentals](GSP1xx/GSP199-ServiceAccountsAndRoles_Fundamentals.sh)
