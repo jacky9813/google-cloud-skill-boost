@@ -2,7 +2,7 @@
 PROJECT=$(gcloud config list project 2>/dev/null | grep = | sed "s/^[^=]*= //")
 
 # Leave this variable blank if you want to enable doing all tasks at once
-DISABLE_ALL_TASK=1
+#DISABLE_ALL_TASK=1
 
 splitter(){
     i=$(tput cols)
@@ -51,10 +51,12 @@ case "$1" in
             	echo "Please confirm your target project is $PROJECT"
             fi
             pause
+            task=${START_TASK:-$([ "$(echo $@ | wc -w)" -ge "2" ] && echo $2 || echo "1")}
+            echo "Starting from task $task"
+            echo ""
     		echo "No argument will be able to passed to any task."
     		echo "Are you sure you wanna do all at once?"
     		pause
-    		task=${START_TASK:-1}
     		while [[ $(type -t task$task) == function ]]; do
                 splitter
     			task$task
@@ -65,13 +67,15 @@ case "$1" in
     "help" | "")
         cat << EOF
 Usage:
-    $0 <task_number>
+    $0 <task_number> <additional_args_for_task>
         Execute specified task.
 
     $0 all
         Execute all tasks from task 1.
 
     START_TASK=<task_number> $0 all
+    - or -
+    $0 all <task_number>
         Execute tasks start from specified task.
 
     $0 help
