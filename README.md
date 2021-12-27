@@ -18,6 +18,7 @@ These scripts may not work since I may still working on them.
 * (Tested)[GSP199 - Service Accounts and Roles: Fundamentals](GSP1xx/GSP199-ServiceAccountsAndRoles_Fundamentals.sh)
 * (Tested)[GSP211 - Multiple VPC Networks](GSP2xx/GSP211-MultipleVPCNetworks.sh)
 * (Tested)[GSP213 - VPC Networks - Controlling Access](GSP2xx/GSP213-VPCNetworks-ControllingAccess.sh)
+* (Tested)[GSP215 - HTTP Load Balancer with Cloud Armor](GSP2xx/GSP215-HTTPLoadBalancerWithCloudArmor.sh)
 * [GSP313 - Create and Manage Cloud Resources: Challenge Lab](GSP3xx/GSP313-CreateAndManageCloudResources_ChallengeLab.sh)
 * (Tested)[GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
 * (Tested)[GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
