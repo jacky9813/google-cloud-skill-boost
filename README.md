@@ -5,23 +5,26 @@ Training course for Google Cloud. This is just a place for me to put my solution
 These scripts may not work since I may still working on them.
 
 ### Available scripts
+* [GSP021 - Orchestrating the Cloud with Kubernetes](GSP0xx/GSP021-OrchestratingTheCloudWithKubernetes.sh)
+* [GSP051 - Continuous Delivery with Jenkins in Kubernetes Engine](GSP0xx/GSP051-ContinuousDeliveryWithJenkinsInKubernetesEngine.sh)
+* [GSP053 - Managing Deployments Using Kubernetes Engine](GSP0xx/GSP053-ManagingDeploymentsUsingKubernetesEngine.sh)
+* [GSP079 - Getting Started with Cloud KMS](GSP0xx/GSP079-GettingStartedWithCloudKMS.sh)
+* [GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
+* [GSP178 - Setting up a Private Kubetnetes Cluster](GSP1xx/GSP178-SettingUpAPrivateKubernetesCluster.sh)
+* [GSP190 - IAM Custom Roles](GSP1xx/GSP190-IAMCustomRoles.sh)
+* [GSP193 - VPC Network Peering](GSP1xx/GSP193-VPCNetworkPeering.sh)
+* [GSP199 - Service Accounts and Roles: Fundamentals](GSP1xx/GSP199-ServiceAccountsAndRoles_Fundamentals.sh)
+* [GSP211 - Multiple VPC Networks](GSP2xx/GSP211-MultipleVPCNetworks.sh)
+* [GSP213 - VPC Networks - Controlling Access](GSP2xx/GSP213-VPCNetworks-ControllingAccess.sh)
+* [GSP215 - HTTP Load Balancer with Cloud Armor](GSP2xx/GSP215-HTTPLoadBalancerWithCloudArmor.sh)
+* [GSP216 - Create an Internal Load Balancer](GSP2xx/GSP216-CreateAnInternalLoadBalancer.sh)
+* [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
+* [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
+
+### Untested scripts
 * [GSP007 - Set up Network and HTTP Load Balancers](GSP0xx/GSP007-SetUpNetworkAndHTTPLoadBalancers.sh)
-* (Tested)[GSP021 - Orchestrating the Cloud with Kubernetes](GSP0xx/GSP021-OrchestratingTheCloudWithKubernetes.sh)
-* (Tested)[GSP051 - Continuous Delivery with Jenkins in Kubernetes Engine](GSP0xx/GSP051-ContinuousDeliveryWithJenkinsInKubernetesEngine.sh)
-* (Tested)[GSP053 - Managing Deployments Using Kubernetes Engine](GSP0xx/GSP053-ManagingDeploymentsUsingKubernetesEngine.sh)
-* (Tested)[GSP079 - Getting Started with Cloud KMS](GSP0xx/GSP079-GettingStartedWithCloudKMS.sh)
 * [GSP100 - Kubernetes Engines: Qwik Start](GSP1xx/GSP100-KubernetesEngines_QwikStart.sh)
-* (Tested)[GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
-* (Tested)[GSP178 - Setting up a Private Kubetnetes Cluster](GSP1xx/GSP178-SettingUpAPrivateKubernetesCluster.sh)
-* (Tested)[GSP190 - IAM Custom Roles](GSP1xx/GSP190-IAMCustomRoles.sh)
-* (Tested)[GSP193 - VPC Network Peering](GSP1xx/GSP193-VPCNetworkPeering.sh)
-* (Tested)[GSP199 - Service Accounts and Roles: Fundamentals](GSP1xx/GSP199-ServiceAccountsAndRoles_Fundamentals.sh)
-* (Tested)[GSP211 - Multiple VPC Networks](GSP2xx/GSP211-MultipleVPCNetworks.sh)
-* (Tested)[GSP213 - VPC Networks - Controlling Access](GSP2xx/GSP213-VPCNetworks-ControllingAccess.sh)
-* (Tested)[GSP215 - HTTP Load Balancer with Cloud Armor](GSP2xx/GSP215-HTTPLoadBalancerWithCloudArmor.sh)
 * [GSP313 - Create and Manage Cloud Resources: Challenge Lab](GSP3xx/GSP313-CreateAndManageCloudResources_ChallengeLab.sh)
-* (Tested)[GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
-* (Tested)[GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
 
 ### Link
 [Training Main Page](https://www.cloudskillsboost.google/)
