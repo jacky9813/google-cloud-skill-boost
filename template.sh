@@ -10,6 +10,7 @@ splitter(){
     	echo -n =
         i=$(($i - 1))
     done
+    echo ""
 }
 pause(){
     read -p "Press Enter to continue"
