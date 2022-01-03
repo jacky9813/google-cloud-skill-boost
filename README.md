@@ -21,6 +21,7 @@ These scripts may not work since I may still working on them.
 * [GSP301 - Deploy a Compute Instance with a Remote Startup Script](GSP3xx/GSP301-DeployAComputeInstanceWithARemoteStartupScript.sh)
 * [GSP303 - Configure Secure RDP using a Windows Bastion Host](GSP3xx/GSP303-ConfigureSecureRDPUsingAWindowsBastionHost.sh)
 * [GSP304 - Build and Deploy a Docker Image to a Kubernetes Cluster](GSP3xx/GSP304-BuildAndDeployADockerImageToAKubernetesCluster.sh)
+* [GSP305 - Scale Out and Update a Containerized Application on a Kubernetes Cluster](GSP3xx/GSP305-ScaleOutAndUpdateAContainerizedApplicationOnAKubernetesCluster.sh)
 * [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
 * [GSP322 - Build and Secure Networks in Google Cloud: Challenge Lab](GSP3xx/GSP322-BuildAndSecureNetworksInGoogleCloud_ChallengeLab.sh)
 * [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
