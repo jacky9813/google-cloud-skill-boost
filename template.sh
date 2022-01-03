@@ -13,7 +13,9 @@ splitter(){
     echo ""
 }
 pause(){
-    read -p "Press Enter to continue"
+    if [ -z "$GLOBAL_NON_STOP" ]; then
+        read -p "Press Enter to continue"
+    fi
 }
 check_return(){
     if [ $1 -ne "0" ]; then
@@ -39,31 +41,39 @@ checkpoint(){
 
 # TODO: PUT THE TASKS HERE
 
+run_all(){
+if [ $DISABLE_ALL_TASK ] ; then
+    echo "Doing all tasks at once has been disabled"
+    exit 1
+else
+    if [ "$PROJECT" == "" ]; then
+        echo "Warning: No selected project"
+        echo "You can still proceed to execute anyway or press Ctrl-C to exit"
+    else
+        echo "Please confirm your target project is $PROJECT"
+    fi
+    pause
+    task=${START_TASK:-$([ "$(echo $@ | wc -w)" -ge "2" ] && echo $2 || echo "1")}
+    echo "Starting from task $task"
+    echo ""
+    echo "No argument will be able to passed to any task."
+	echo "Are you sure you wanna do all at once?"
+	pause
+    while [[ $(type -t task$task) == function ]]; do
+        splitter
+    	task$task
+    	task=$(($task + 1))
+    done
+fi
+}
+
 case "$1" in
     "all")
-    	if [ $DISABLE_ALL_TASK ] ; then
-    		echo "Doing all tasks at once has been disabled"
-    		exit 1
-    	else
-            if [ "$PROJECT" == "" ]; then
-            	echo "Warning: No selected project"
-            	echo "You can still proceed to execute anyway or press Ctrl-C to exit"
-            else
-            	echo "Please confirm your target project is $PROJECT"
-            fi
-            pause
-            task=${START_TASK:-$([ "$(echo $@ | wc -w)" -ge "2" ] && echo $2 || echo "1")}
-            echo "Starting from task $task"
-            echo ""
-    		echo "No argument will be able to passed to any task."
-    		echo "Are you sure you wanna do all at once?"
-    		pause
-    		while [[ $(type -t task$task) == function ]]; do
-                splitter
-    			task$task
-    			task=$(($task + 1))
-    		done
-    	fi
+        run_all $@
+        ;;
+    "non-stop")
+        GLOBAL_NON_STOP=1
+        run_all $@
         ;;
     "help" | "")
         cat << EOF
@@ -78,6 +88,9 @@ Usage:
     - or -
     $0 all <task_number>
         Execute tasks start from specified task.
+
+    $0 non-stop [task_number]
+        Like "all" command but will not pause if executed as expected.
 
     $0 help
         Display this message
