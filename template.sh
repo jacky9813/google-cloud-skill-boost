@@ -13,7 +13,7 @@ splitter(){
     echo ""
 }
 pause(){
-    if [ -z "$GLOBAL_NON_STOP" ]; then
+    if [ -z "$GLOBAL_NON_STOP" ] || [ ! -z "$FORCE_PAUSE" ]; then
         read -p "Press Enter to continue"
     fi
 }
@@ -30,7 +30,7 @@ echo_cmd(){
     RET=$?
     if [ $RET -ne "0" ]; then
         echo "Error occured! You can ignore this message and press enter to continue."
-        pause
+        FORCE_PAUSE=1 pause
     fi
 }
 checkpoint(){
