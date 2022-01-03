@@ -18,6 +18,7 @@ These scripts may not work since I may still working on them.
 * [GSP213 - VPC Networks - Controlling Access](GSP2xx/GSP213-VPCNetworks-ControllingAccess.sh)
 * [GSP215 - HTTP Load Balancer with Cloud Armor](GSP2xx/GSP215-HTTPLoadBalancerWithCloudArmor.sh)
 * [GSP216 - Create an Internal Load Balancer](GSP2xx/GSP216-CreateAnInternalLoadBalancer.sh)
+* [GSP301 - Deploy a Compute Instance with a Remote Startup Script](GSP3xx/GSP301-DeployAComputeInstanceWithARemoteStartupScript.sh)
 * [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
 * [GSP322 - Build and Secure Networks in Google Cloud: Challenge Lab](GSP3xx/GSP322-BuildAndSecureNetworksInGoogleCloud_ChallengeLab.sh)
 * [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
