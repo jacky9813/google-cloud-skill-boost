@@ -19,6 +19,7 @@ These scripts may not work since I may still working on them.
 * [GSP215 - HTTP Load Balancer with Cloud Armor](GSP2xx/GSP215-HTTPLoadBalancerWithCloudArmor.sh)
 * [GSP216 - Create an Internal Load Balancer](GSP2xx/GSP216-CreateAnInternalLoadBalancer.sh)
 * [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
+* [GSP322 - Build and Secure Networks in Google Cloud: Challenge Lab](GSP3xx/GSP322-BuildAndSecureNetworksInGoogleCloud_ChallengeLab.sh)
 * [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
 
 ### Untested scripts
