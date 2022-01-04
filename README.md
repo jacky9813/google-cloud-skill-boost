@@ -1,14 +1,13 @@
-# Google Cloud Skill Boost
+# Qwiklabs Script
 
-Training course for Google Cloud. This is just a place for me to put my solution scripts.
-
-These scripts may not work since I may still working on them.
+Qwiklabs has several training courses for various products in Google Cloud Platform. This repository is just a place for me to put my solution scripts.
 
 ### Available scripts
 * [GSP021 - Orchestrating the Cloud with Kubernetes](GSP0xx/GSP021-OrchestratingTheCloudWithKubernetes.sh)
 * [GSP051 - Continuous Delivery with Jenkins in Kubernetes Engine](GSP0xx/GSP051-ContinuousDeliveryWithJenkinsInKubernetesEngine.sh)
 * [GSP053 - Managing Deployments Using Kubernetes Engine](GSP0xx/GSP053-ManagingDeploymentsUsingKubernetesEngine.sh)
 * [GSP079 - Getting Started with Cloud KMS](GSP0xx/GSP079-GettingStartedWithCloudKMS.sh)
+* [GSP101 - Google Cloud Essential Skills: Challenge Lab](GSP1xx/GSP101-GoogleCloudEssentialSkills_ChallengeLab.sh)
 * [GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
 * [GSP178 - Setting up a Private Kubetnetes Cluster](GSP1xx/GSP178-SettingUpAPrivateKubernetesCluster.sh)
 * [GSP190 - IAM Custom Roles](GSP1xx/GSP190-IAMCustomRoles.sh)
@@ -33,5 +32,5 @@ These scripts may not work since I may still working on them.
 * [GSP313 - Create and Manage Cloud Resources: Challenge Lab](GSP3xx/GSP313-CreateAndManageCloudResources_ChallengeLab.sh)
 
 ### Link
-[Training Main Page](https://www.cloudskillsboost.google/)
+[Qwiklabs Main Page](https://qwiklabs.com/)
 
