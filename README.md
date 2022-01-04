@@ -7,6 +7,7 @@ Qwiklabs has several training courses for various products in Google Cloud Platf
 * [GSP051 - Continuous Delivery with Jenkins in Kubernetes Engine](GSP0xx/GSP051-ContinuousDeliveryWithJenkinsInKubernetesEngine.sh)
 * [GSP053 - Managing Deployments Using Kubernetes Engine](GSP0xx/GSP053-ManagingDeploymentsUsingKubernetesEngine.sh)
 * [GSP079 - Getting Started with Cloud KMS](GSP0xx/GSP079-GettingStartedWithCloudKMS.sh)
+* [GSP101 - Google Cloud Essential Skills: Challenge Lab](GSP1xx/GSP101-GoogleCloudEssentialSkills_ChallengeLab.sh)
 * [GSP117 - Setting up Jenkins on Kubernetes Engine](GSP1xx/GSP117-SettingUpJenkinsOnKubernetesEngine.sh)
 * [GSP178 - Setting up a Private Kubetnetes Cluster](GSP1xx/GSP178-SettingUpAPrivateKubernetesCluster.sh)
 * [GSP190 - IAM Custom Roles](GSP1xx/GSP190-IAMCustomRoles.sh)
