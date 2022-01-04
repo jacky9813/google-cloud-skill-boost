@@ -22,12 +22,10 @@ These scripts may not work since I may still working on them.
 * [GSP303 - Configure Secure RDP using a Windows Bastion Host](GSP3xx/GSP303-ConfigureSecureRDPUsingAWindowsBastionHost.sh)
 * [GSP304 - Build and Deploy a Docker Image to a Kubernetes Cluster](GSP3xx/GSP304-BuildAndDeployADockerImageToAKubernetesCluster.sh)
 * [GSP305 - Scale Out and Update a Containerized Application on a Kubernetes Cluster](GSP3xx/GSP305-ScaleOutAndUpdateAContainerizedApplicationOnAKubernetesCluster.sh)
+* [GSP306 - Migrate a MySQL Database to Google Cloud SQL](GSP3xx/GSP306-MigrateAMySQLDatabaseToGoogleCloudSQL.sh)
 * [GSP318 - Deploy to Kubernetes in Google Cloud: Challenge Lab](GSP3xx/GSP318-DeployToKubernetesInGoogleCloud_ChallengeLab.sh)
 * [GSP322 - Build and Secure Networks in Google Cloud: Challenge Lab](GSP3xx/GSP322-BuildAndSecureNetworksInGoogleCloud_ChallengeLab.sh)
 * [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
-
-### Scripts that has known issues
-* [GSP306 - Migrate a MySQL Database to Google Cloud SQL](GSP3xx/GSP306-MigrateAMySQLDatabaseToGoogleCloudSQL.sh)
 
 ### Untested scripts
 * [GSP007 - Set up Network and HTTP Load Balancers](GSP0xx/GSP007-SetUpNetworkAndHTTPLoadBalancers.sh)

@@ -44,7 +44,7 @@ REGION=us-central1
 ZONE=$REGION-a
 NEW_DB_INST_NAME=blog-mysql80
 
-# Here's a list of supported database version descriptor:
+# Here's a list of supported database version:
 # https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1beta4/SqlDatabaseVersion
 NEW_DB_VERSION=MYSQL_8_0
 NEW_DB_ROOT_PW=$(cat .newdb-root-passwd 2>/dev/null)
@@ -53,15 +53,9 @@ echo $NEW_DB_ROOT_PW > .newdb-root-passwd
 NEW_DB_CORE=2
 NEW_DB_MEM=8GiB # Default unit is GiB
 NEW_DB_NS=wordpress
-# The monitor instance need access too. (Come on Qwiklabs, you should tell us at the very beginning.)
-NEW_DB_AUTH_NETWORK=
-for addr in $(gcloud compute instances list --format="csv[no-heading](EXTERNAL_IP)"); do
-    if [ -z $NEW_DB_AUTH_NETWORK ]; then
-        NEW_DB_AUTH_NETWORK=$addr
-    else
-        NEW_DB_AUTH_NETWORK=$NEW_DB_AUTH_NETWORK,$addr
-    fi
-done
+# Qwiklabs checkpoint requires the CIDR representation in authorized networks.
+# But Cloud SQL seems accepting plain IP address without problem.
+NEW_DB_AUTH_NETWORK=$(gcloud compute instances list --filter="name:blog" --format="csv[no-heading](EXTERNAL_IP)")/32
 
 DB_USER=blogadmin
 DB_USER_PW="Password1*"
@@ -79,16 +73,11 @@ In this task, we'll:
 * Create a new database instance
 * Create a database
 * Create a user using old credentials
-
-=========================
-Note: The authorized network checkpoint cannot work for some reason.
-I've sent out a support ticket asking about it at Jan 4, 2022 12:08 (+0800 Taipei Time).
-=========================
 EOF
 pause
 
-# Don't know why but I cannot create an instance at the same subnet as the blog.
-# All I can do is to create an instance using public facing address with restriction.
+# It's not the best practice that database is exposed.
+# Even it has ACL limitation.
 echo_cmd gcloud sql instances create $NEW_DB_INST_NAME \
     --database-version=$NEW_DB_VERSION \
     --database-flags=character_set_server=utf8mb4 \
