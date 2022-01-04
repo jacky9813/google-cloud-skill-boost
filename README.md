@@ -26,6 +26,9 @@ These scripts may not work since I may still working on them.
 * [GSP322 - Build and Secure Networks in Google Cloud: Challenge Lab](GSP3xx/GSP322-BuildAndSecureNetworksInGoogleCloud_ChallengeLab.sh)
 * [GSP474 - Google Cloud Packet Mirroring with OpenSource IDS](GSP4xx/GSP474-GoogleCloudPacketMirroringWithOpenSourceIDS.sh)
 
+### Scripts that has known issues
+* [GSP306 - Migrate a MySQL Database to Google Cloud SQL](GSP3xx/GSP306-MigrateAMySQLDatabaseToGoogleCloudSQL.sh)
+
 ### Untested scripts
 * [GSP007 - Set up Network and HTTP Load Balancers](GSP0xx/GSP007-SetUpNetworkAndHTTPLoadBalancers.sh)
 * [GSP100 - Kubernetes Engines: Qwik Start](GSP1xx/GSP100-KubernetesEngines_QwikStart.sh)
